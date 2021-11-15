@@ -7,6 +7,9 @@ class HostedServer < ApplicationRecord
     Rails.application.credentials.aws[:access_key_id],
     Rails.application.credentials.aws[:secret_access_key]
   )
+  Aws.config.update({
+    region: ENV["AWS_REGION"],
+  })
 
   @client = Aws::Route53::Client.new()
 
