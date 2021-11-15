@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+        integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+    <!-- VueJS & Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Hello, world!</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand">DNS records system</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./">DNS</a></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./servers.html">Servers</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="app" class="container">
+        <br>
+        <h2>Currently published DNS entries</h2>
+        <div v-if="loading" class="loader"></div>
+        <table v-if="loading == false" class="table table-bordered">
+            <caption>hosted servers</caption>
+            <tr>
+                <th scope="col">Domain String</th>
+                <th scope="col">IP</th>
+                <th scope="col">Server Friendly Name</th>
+                <th scope="col">Cluster Name</th>
+            </tr>
+            <tr v-for="hostServer in hostedServers">
+                <td>{{hostServer.domain_string}}</td>
+                <td>{{hostServer.ip_string}}</td>
+                <td v-if="hostServer.friendly_name">{{hostServer.friendly_name}}</td>
+                <td v-else>not found</td>
+                <td v-if="hostServer.cluster">{{hostServer.cluster.name}}</td>
+                <td v-else>N/A</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js"
+        integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2"
+        crossorigin="anonymous"></script>
+</body>
+<script>
+    const apiDomain = "http://localhost:3000/api/v1"
+    new Vue({
+        el: "#app",
+        data: {
+            loading: false,
+            hostedServers: []
+        },
+        mounted() {
+            this.init();
+        },
+        methods: {
+            init() {
+                this.getHostedServers();
+            },
+            async getHostedServers() {
+                try {
+                    this.loading = true;
+                    url = url = apiDomain + "/hosted_servers";
+
+                    const response = await axios.get(url);
+                    console.log(response);
+                    if (response.status == "200") {
+                        this.hostedServers = response.data;
+
+                    }
+                    this.loading = false;
+                    console.log(this.hostedServers);
+                    return;
+                } catch (error) {
+                    // handle error here
+                    console.log("error")
+                    this.loading = false;
+                    return;
+                }
+            }
+        },
+    });
+</script>
+<style lang="scss" scoped>
+    .loader {
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #3498db;
+        border-radius: 50%;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 36px;
+        height: 36px;
+        animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+</html>

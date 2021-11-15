@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  friendly_name: MyString
+  ip_string: MyString
+  cluster_id: 1
+
+two:
+  friendly_name: MyString
+  ip_string: MyString
+  cluster_id: 1
